@@ -60,18 +60,24 @@ async function fetchDataAndDisplay() {
       }
     });
 
-    cafeListTable.innerHTML = "";
+    if (result.length > 0) {
+      cafeListTable.innerHTML = "";
 
-    let table = "<table>";
-    table =
-      table +
-      "<tr><th>Name</th><th>Street</th><th>Locality</th> <th>Pin Code</th></tr>";
-    result.forEach((res) => {
-      table += `<tr><td>${res.name}</td><td>${res.street_no}</td><td>${res.locality}</td> <td>${res.postal_code}</td></tr> `;
-    });
-    table += "</table>";
-    //const cafeListTable = document.getElementById("cafeListTable");
-    cafeListTable.innerHTML = table;
+      let table = "<table>";
+      table +=
+        "<tr><th>Name</th><th>Street</th><th>Locality</th> <th>Pin Code</th></tr>";
+      result.forEach((res) => {
+        table += `<tr><td>${res.name}</td><td>${res.street_no}</td><td>${res.locality}</td> <td>${res.postal_code}</td></tr> `;
+      });
+      table += "</table>";
+      cafeListTable.innerHTML = table;
+    } else {
+      cafeListTable.innerHTML = "";
+      let span = "<span>";
+      span += `${searchItem} Is Not Found.`;
+      span += "</span>";
+      cafeListTable.innerHTML = span;
+    }
   }
 }
 fetchDataAndDisplay();
