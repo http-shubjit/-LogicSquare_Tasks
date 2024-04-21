@@ -1,9 +1,7 @@
 import { useContext, useRef } from "react"
 import { EmployeList } from '../../store/employe-list-store'
-import { useNavigate } from "react-router-dom"
 function CreateEmployee() {
   const { addEmploye } = useContext(EmployeList)
-  const navigate = useNavigate()
 
   const IdElement = useRef()
   const nameElement = useRef()
@@ -17,12 +15,12 @@ function CreateEmployee() {
     const salary = salaryElement.current.value
     const age = ageElement.current.value.split(' ')
     //for clear all
-    ageElement.current.value = ""
-    ageElement.current.value = ""
-    ageElement.current.value = ""
+    IdElement.current.value = ""
+    nameElement.current.value = ""
+    salaryElement.current.value = ""
     ageElement.current.value = ""
     addEmploye(Id, name, salary, age)
-    navigate("/employelist")
+
 
   }
 
@@ -30,8 +28,8 @@ function CreateEmployee() {
   return (
     <form className="createpost" onSubmit={handleOnsubmit}>
       <div className="mb-3">
-        <label htmlFor="userId" className="form-label">Enter Employe Id </label>
-        <input type="text" className="form-control" id="userId" placeholder="E-99" ref={IdElement} required />
+        <label htmlFor="userId" className="form-label ">Enter Employe Id </label>
+        <input type="text" className="form-control" id="userId" placeholder="enter employe id" ref={IdElement} required />
       </div>
 
       <div className="mb-3">
@@ -49,7 +47,7 @@ function CreateEmployee() {
         <input type="text" className="form-control" id="tags" ref={ageElement} />
       </div>
 
-      <button type="submit" className="btn btn-primary createbutton">Create Employe</button>
+      <button type="submit" className="btn bg-info">Create Employe</button>
     </form>
   )
 }

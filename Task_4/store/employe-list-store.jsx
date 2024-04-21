@@ -1,14 +1,14 @@
-import { useEffect, useState } from "react";
-import { createContext, useCallback, useReducer } from "react"
+/* eslint-disable react/prop-types */
+import { createContext, useReducer } from "react"
 
 export const EmployeList = createContext({
   employeList: [],
   addEmploye: () => { },
-  deleteEmploye: () => { }
+  deleteEmploye: () => { },
+  editEmploye: () => { }
 })
 const employeReducer = (currEmployeList, action) => {
   let newEmployeList = currEmployeList;
-
   if (action.type === "DELETE") {
     newEmployeList = newEmployeList.filter((employe) => employe.id !== action.payload.id)
   }
@@ -17,30 +17,30 @@ const employeReducer = (currEmployeList, action) => {
 
     newEmployeList = [...newEmployeList, action.payload]
   }
-  else if (action.type === "ADD_INTIAL_POST") {
-    newEmployeList = action.payload.users
+  else if (action.type === "EDIT") {
+    const updateemploye = action.payload.updateemploye
+    // console.log(updateemploye.id)
+    const updatedList = newEmployeList.map(employee => {
+      if (employee.id === updateemploye.id) {
+        return {
+          ...employee,
+          name: updateemploye.name,
+          age: updateemploye.age,
+          salary: updateemploye.salary
+        };
+      }
+      return employee;
+    });
+
+    newEmployeList = updatedList;
   }
   return newEmployeList
 }
 
 const EmployeListProvider = ({ children }) => {
-  const [employeList, dispatchEmploye] = useReducer(employeReducer, [])
+  const [employeList, dispatchEmploye] = useReducer(employeReducer, DEFAULT_LIST)
 
-  console.log(employeList)
-
-  const [fetching, setFetching] = useState(false)
-
-  const addIntialEmploye = useCallback((users) => {
-    dispatchEmploye({
-      type: "ADD_INTIAL_POST",
-      payload: {
-        users
-      },
-    })
-  }, [])
-
-
-  const addEmploye = useCallback((Id, name, salary, age) => {
+  const addEmploye = (Id, name, salary, age) => {
     dispatchEmploye({
       type: "ADD",
       payload: {
@@ -50,48 +50,65 @@ const EmployeListProvider = ({ children }) => {
         age: age,
       }
 
-    })
-  }, [dispatchEmploye])
+    }),
+      [dispatchEmploye]
+  }
 
-  const deleteEmploye = useCallback((employeid) => {
+  const deleteEmploye = (employeid) => {
     dispatchEmploye({
       type: 'DELETE'
       ,
       payload: {
         id: employeid
       }
+    }), [dispatchEmploye]
+  }
+  const editEmploye = (updateemploye) => {
+    dispatchEmploye({
+      type: "EDIT",
+      payload: {
+        updateemploye: updateemploye
+      }
+
     })
 
 
-  }, [dispatchEmploye])
+  }
 
-  useEffect(() => {
-    const controller = new AbortController()
-    const signal = controller.signal
-    setFetching(true)
-    fetch('https://dummyjson.com/users', signal)
-      .then(res => res.json())
-      .then(data => {
-        addIntialEmploye(data.users)
-        setFetching(false)
-      }
-      );
-    return () => {
-      controller.abort()
-    }
 
-  }, [])
 
 
 
   return <EmployeList.Provider value={{
-    employeList, addEmploye, deleteEmploye, fetching
+    employeList, addEmploye, deleteEmploye, editEmploye
   }
   }>
     {children}
   </EmployeList.Provider>
 }
 
+const DEFAULT_LIST = [
+  {
+    id: 2,
+    name: "Ranjit Biswal",
+    salary: "600",
+    age: 27
+  },
+
+
+  {
+    id: 3,
+    name: "Biswajit Biswal",
+    salary: "500",
+    age: 24
+  },
+  {
+    id: 1,
+    name: "Shubhajit Biswal",
+    salary: "400",
+    age: 21
+  },
+]
 
 
 export default EmployeListProvider
